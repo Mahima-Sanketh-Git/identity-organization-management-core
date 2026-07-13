@@ -28,6 +28,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.context.CarbonCoreInitializedEvent;
+import org.wso2.carbon.identity.flow.execution.engine.graph.Executor;
 import org.wso2.carbon.identity.organization.management.service.OrganizationGroupResidentResolverService;
 import org.wso2.carbon.identity.organization.management.service.OrganizationGroupResidentResolverServiceImpl;
 import org.wso2.carbon.identity.organization.management.service.OrganizationManagementInitialize;
@@ -36,6 +37,7 @@ import org.wso2.carbon.identity.organization.management.service.OrganizationMana
 import org.wso2.carbon.identity.organization.management.service.OrganizationManagerImpl;
 import org.wso2.carbon.identity.organization.management.service.OrganizationUserResidentResolverService;
 import org.wso2.carbon.identity.organization.management.service.OrganizationUserResidentResolverServiceImpl;
+import org.wso2.carbon.identity.organization.management.service.executor.OrgCreateExecutor;
 import org.wso2.carbon.identity.organization.management.service.listener.OrganizationManagerListener;
 import org.wso2.carbon.identity.organization.management.service.util.OrganizationManagementConfigUtil;
 import org.wso2.carbon.tenant.mgt.services.TenantMgtService;
@@ -70,6 +72,8 @@ public class OrganizationManagementServiceComponent {
                     new OrganizationGroupResidentResolverServiceImpl(), null);
             bundleContext.registerService(OrganizationManagementInitialize.class.getName(),
                     new OrganizationManagementInitializeImpl(), null);
+            bundleContext.registerService(Executor.class.getName(),
+                    new OrgCreateExecutor(), null);
             OrganizationManagementDataHolder.getInstance().initDataSource();
             LOG.debug("Organization Management component activated successfully.");
         } catch (Exception e) {
