@@ -160,8 +160,6 @@ public class OrganizationProvisioningExecutor implements Executor {
         String organizationHandle = resolveOrganizationHandle(organizationManager, flowOrganization);
         Map<String, String> attributes = flowOrganization.getAttributes();
 
-        flowOrganization.setCreatorId(creatorId);
-
         TenantTypeOrganization organization = new TenantTypeOrganization(organizationHandle);
         organization.setId(Utils.generateUniqueID());
         organization.setName(flowOrganization.getOrganizationName());
