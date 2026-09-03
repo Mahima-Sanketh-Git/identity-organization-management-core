@@ -338,5 +338,7 @@
 
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
         <equinox.osgi.stax-api.imp.pkg.version.range>[1.0.1,2.0.0)</equinox.osgi.stax-api.imp.pkg.version.range>
+        <carbon.identity.framework.version>7.11.137</carbon.identity.framework.version>
+        <carbon.identity.framework.imp.pkg.version.range>[7.3.6, 8.0.0)</carbon.identity.framework.imp.pkg.version.range>
     </properties>
 </project>
