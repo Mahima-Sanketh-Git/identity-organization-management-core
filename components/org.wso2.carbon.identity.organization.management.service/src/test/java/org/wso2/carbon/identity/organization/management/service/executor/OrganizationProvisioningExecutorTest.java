@@ -208,14 +208,24 @@ public class OrganizationProvisioningExecutorTest {
         Assert.assertNull(captureCreatedOrganization().getOrganizationHandle());
     }
 
-    @Test(description = "A name sanitizing below the minimum length is not a usable handle.")
-    public void testTooShortNameYieldsNullHandle() throws Exception {
+    @Test(description = "A short but usable name is padded, rather than left to a server generated handle.")
+    public void testShortNameIsPaddedToMinimumLength() throws Exception {
+
+        FlowExecutionContext context = buildContext("IBM", null);
+
+        executor.execute(context);
+
+        Assert.assertEquals(captureCreatedOrganization().getOrganizationHandle(), "ibm0");
+    }
+
+    @Test(description = "A name yielding a single usable character is padded up to the minimum length.")
+    public void testVeryShortNameIsPaddedToMinimumLength() throws Exception {
 
         FlowExecutionContext context = buildContext("A B", null);
 
         executor.execute(context);
 
-        Assert.assertNull(captureCreatedOrganization().getOrganizationHandle());
+        Assert.assertEquals(captureCreatedOrganization().getOrganizationHandle(), "ab00");
     }
 
     @Test(description = "A taken handle gets a numeric suffix rather than failing.")

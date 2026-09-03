@@ -76,6 +76,9 @@ public class OrganizationProvisioningExecutor implements Executor {
     private static final int MIN_HANDLE_LENGTH = 4;
     private static final int MAX_HANDLE_LENGTH = 30;
 
+    /** Appended to a handle derived from a name too short to meet the minimum handle length. */
+    private static final char HANDLE_PADDING_CHARACTER = '0';
+
     /** Numeric suffixes tried on a derived handle collision before falling back to a random token. */
     private static final int MAX_HANDLE_COLLISION_ATTEMPTS = 5;
 
@@ -222,8 +225,11 @@ public class OrganizationProvisioningExecutor implements Executor {
             return submittedHandle.trim();
         }
 
-        String baseHandle = sanitizeHandle(flowOrganization.getOrganizationName());
-        if (baseHandle.length() < MIN_HANDLE_LENGTH) {
+        // Only a name with no usable characters at all is left to the server. A short but usable name
+        // is padded instead, so that an organization named "IBM" gets a readable handle rather than
+        // falling back to its identifier.
+        String baseHandle = padHandle(sanitizeHandle(flowOrganization.getOrganizationName()));
+        if (StringUtils.isBlank(baseHandle)) {
             return null;
         }
         if (!organizationManager.isOrganizationExistByHandle(baseHandle)) {
@@ -246,6 +252,26 @@ public class OrganizationProvisioningExecutor implements Executor {
         LOG.debug("Could not derive a unique handle from the organization name. Falling back to a "
                 + "server generated handle.");
         return null;
+    }
+
+    /**
+     * Pads a handle that is shorter than the minimum handle length, so a short organization name still
+     * yields a handle the console would accept. An empty handle is returned unchanged, since there is
+     * nothing to pad and the server derives one instead.
+     *
+     * @param handle Sanitized handle derived from the organization name.
+     * @return A handle of at least the minimum length, or an empty string.
+     */
+    private String padHandle(String handle) {
+
+        if (StringUtils.isBlank(handle)) {
+            return StringUtils.EMPTY;
+        }
+        StringBuilder padded = new StringBuilder(handle);
+        while (padded.length() < MIN_HANDLE_LENGTH) {
+            padded.append(HANDLE_PADDING_CHARACTER);
+        }
+        return padded.toString();
     }
 
     /**
